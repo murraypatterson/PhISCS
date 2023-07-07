@@ -373,11 +373,6 @@ def generateArtificialNullMutation(existingBulkMutation):
 
 
 def draw_tree(filename, addBulk, bulkfile):
-    import pandas as pd
-    import pygraphviz as pyg
-
-    graph = pyg.AGraph(strict=False, directed=True, dpi=300)
-    font_name = 'Avenir'
 
     class Node:
         def __init__(self, name, parent):
@@ -387,11 +382,12 @@ def draw_tree(filename, addBulk, bulkfile):
             if parent:
                 parent.children.append(self)
 
-    def print_tree(node):
-        graph.add_node(node.name, label=node.name, fontname=font_name, color='black', penwidth=3.5)
-        for child in node.children:
-            graph.add_edge(node.name, child.name)
-            print_tree(child)
+    def display_tree(node, h) :
+        print(node.name, end = ',', file = h)
+        print(*(child.name for child in node.children), sep = ',', file = h)
+
+        for child in node.children :
+            display_tree(child, h)
 
     def contains(col1, col2):
         for i in range(len(col1)):
@@ -410,7 +406,6 @@ def draw_tree(filename, addBulk, bulkfile):
                     names[i] += '<br/><br/>' + x
                     j -= 1
                 j += 1
-            names[i] = '<'+names[i]+'>'
             i += 1
 
         rows = len(matrix)
@@ -442,7 +437,7 @@ def draw_tree(filename, addBulk, bulkfile):
                 node = Node(mutations_name[i], root)
                 mut_nod[mutations_name[i]] = node
             i -=1
-        print_tree(root)
+        return root
 
     if addBulk:
         vafs = {}
@@ -461,12 +456,12 @@ def draw_tree(filename, addBulk, bulkfile):
         else:
             mutation_names = fin.readline().strip().split('\t')[1:]
     sol_matrix = np.delete(inp, 0, 1)
-    write_tree(sol_matrix, mutation_names)
-    graph.layout(prog='dot')
+    mutation_names = open(filename,'r').readline().strip().split('\t')[1:]
+    root = write_tree(sol_matrix, mutation_names)
     outputpath = filename[:-len('.CFMatrix')]
-    graph.draw('{}.png'.format(outputpath))
-
-
+    h = open('{}.csv'.format(outputpath),'w')
+    display_tree(root, h)
+    h.close()
 
 def draw_farid(filename, addBulk, bulkfile):
     add_cells=True
