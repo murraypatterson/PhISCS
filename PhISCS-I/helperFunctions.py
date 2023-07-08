@@ -383,8 +383,9 @@ def draw_tree(filename, addBulk, bulkfile):
                 parent.children.append(self)
 
     def display_tree(node, h) :
-        print(node.name, end = ',', file = h)
-        print(*(child.name for child in node.children), sep = ',', file = h)
+        print('>', node.name, sep = '', file = h)
+        for child in node.children :
+            print(child.name, file = h)
 
         for child in node.children :
             display_tree(child, h)
@@ -403,7 +404,7 @@ def draw_tree(filename, addBulk, bulkfile):
                 if np.array_equal(matrix[:,i], matrix[:,j]):
                     matrix = np.delete(matrix, j, 1)
                     x = names.pop(j)
-                    names[i] += '<br/><br/>' + x
+                    names[i] += ',' + x
                     j -= 1
                 j += 1
             i += 1
