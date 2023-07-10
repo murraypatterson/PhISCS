@@ -460,7 +460,7 @@ def draw_tree(filename, addBulk, bulkfile):
     mutation_names = open(filename,'r').readline().strip().split('\t')[1:]
     root = write_tree(sol_matrix, mutation_names)
     outputpath = filename[:-len('.CFMatrix')]
-    h = open('{}.csv'.format(outputpath),'w')
+    h = open('{}.txt'.format(outputpath),'w')
     display_tree(root, h)
     h.close()
 
